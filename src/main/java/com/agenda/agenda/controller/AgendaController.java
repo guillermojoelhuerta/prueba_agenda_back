@@ -4,6 +4,8 @@ import com.agenda.agenda.exception.BindingResultException;
 import com.agenda.agenda.model.Agenda;
 import com.agenda.agenda.service.AgendaService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +25,14 @@ public class AgendaController {
     }
 
     @GetMapping(value = "get-contacto-by-id/{id}")
-    public Optional<Agenda> getContacto(@PathVariable("id") Long id) {
-        return agendaService.getContacto(id);
+    public ResponseEntity<Agenda>  getContacto(@PathVariable("id") Long id) {
+        return agendaService.getContacto(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping(value = "save-agenda")
+    @ResponseStatus(HttpStatus.CREATED)
     public Agenda saveAgenda(@Valid @RequestBody Agenda agenda,  BindingResult result)  {
         if(result.hasErrors()){
             throw new BindingResultException(result);

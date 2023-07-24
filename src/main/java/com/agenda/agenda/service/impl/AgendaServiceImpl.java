@@ -16,6 +16,10 @@ public class AgendaServiceImpl implements AgendaService {
     AgendaRepository agendaRepository;
     @Override
     public Agenda saveAgenda(Agenda agenda) {
+        Optional<Agenda> contactoGuardado = agendaRepository.findByTelefono(agenda.getTelefono());
+        if(contactoGuardado.isPresent()){
+            throw new ResourceNotFoundException("El contacto con ese teléfono ya existe : " + agenda.getTelefono());
+        }
         return agendaRepository.save(agenda);
     }
     @Override
@@ -35,7 +39,6 @@ public class AgendaServiceImpl implements AgendaService {
     public Agenda updateAgenda(Agenda agenda) {
         return agendaRepository.save(agenda);
     }
-
 
     @Override
     public boolean deleteAgenda(Long telefono) {
